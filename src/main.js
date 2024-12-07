@@ -8,7 +8,7 @@ loadModel().then((model) => {
 	web.locals.model = model;
 });
 
-const port = 3000;
+const port = 8080;
 web.listen(port, () => {
 	console.log(`Server listening on port ${port}`);
 });

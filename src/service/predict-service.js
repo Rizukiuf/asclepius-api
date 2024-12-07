@@ -1,6 +1,6 @@
 const tfjs = require('@tensorflow/tfjs-node');
 const { ResponseError } = require('../error/response-error');
-const storeData = require('../application/firestore');
+const { storeData, getData } = require('../application/firestore');
 
 const predict = async (req) => {
 
@@ -39,7 +39,7 @@ const predict = async (req) => {
 	}
 
 	// store to firestore
-	const id = await storeData('predictions', data);
+	const id = await storeData('predictions', { ...data, createdAt });
 
 	return {
 		id,
@@ -49,12 +49,9 @@ const predict = async (req) => {
 };
 
 const getHistories = async (req, res, next) => {
-	try {
-		const histories = await storeData('predictions');
-		return histories;
-	} catch (error) {
-		next(error);
-	}
+	const histories = await getData('predictions');
+
+	return histories;
 }
 
 module.exports = {

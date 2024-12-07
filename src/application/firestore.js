@@ -9,4 +9,14 @@ const storeData = async (collection = 'predictions', data) => {
 	return document.id;
 };
 
-module.exports = storeData;
+const getData = async (collection = 'predictions') => {
+	const snapshot = await firestore.collection(collection).get();
+	const data = snapshot.docs.map((doc) => doc.data());
+
+	return data;
+}
+
+module.exports = {
+	storeData,
+	getData
+};
