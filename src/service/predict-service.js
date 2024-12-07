@@ -4,19 +4,18 @@ const { storeData, getData } = require('../application/firestore');
 
 const predict = async (req) => {
 
-	if (!req.file) {
-		throw new ResponseError(400, 'Image file is required');
+	if (!req.file || !req.file.buffer) {
+		throw new ResponseError(400, 'Terjadi kesalahan dalam melakukan prediksi');
 	}
 
 	const model = req.app.locals.model;
 	const imageBuffer = req.file.buffer;
 
-	// check channel
-	if (imageBuffer.length % 3 !== 0) {
+	const image = tfjs.node.decodeImage(imageBuffer).resizeNearestNeighbor([224, 224]).toFloat().expandDims();
+
+	if (image.shape[3] !== 3) {
 		throw new ResponseError(400, 'Terjadi kesalahan dalam melakukan prediksi');
 	}
-
-	const image = tfjs.node.decodeImage(imageBuffer, 3).resizeNearestNeighbor([224, 224]).toFloat().expandDims();
 
 	const prediction = model.predict(image);
 	const predictionData = (await prediction.data())[0];
