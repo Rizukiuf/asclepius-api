@@ -4,9 +4,13 @@ const firestore = new Firestore();
 
 const storeData = async (collection = 'predictions', data) => {
 	const document = firestore.collection(collection).doc();
-	await document.set(data);
+	const id = document.id;
+	await document.set({
+		id: id,
+		...data
+	});
 
-	return document.id;
+	return id;
 };
 
 const getData = async (collection = 'predictions') => {
@@ -14,7 +18,7 @@ const getData = async (collection = 'predictions') => {
 	const data = snapshot.docs.map((doc) => {
 		return {
 			id: doc.id,
-			...doc.data()
+			history: doc.data()
 		};
 	});
 
